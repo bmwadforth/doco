@@ -22,16 +22,18 @@ func main(){
 	width, height := pdf.GetDimensions()
 	fmt.Printf("Dimensions Of Doco Page. Height: %d \t Width: %d\n", height, width)
 
+	*/
 
 	saveErr := pdf.Save("./myPdf.pdf")
 	if saveErr != nil {
 		fmt.Printf("An Error Occurred: %v\n", saveErr)
-	}*/
+	}
 
+	/*
 	err := pdf.Build()
 	if err != nil {
 		log.Fatal(fmt.Sprintf("An Error Occurred: %v", err))
-	}
+	}*/
 
 	log.Println(pdf.Output())
 }

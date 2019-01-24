@@ -18,5 +18,5 @@ func ConvertUnit(val int, fromUnit StandardUnit, toUnit StandardUnit) (float32, 
 }
 
 func GenerateIndirectReference(reference IndirectReference) string {
-	return fmt.Sprintf("%d %d obj", reference.ObjectNumber, reference.GenerationNumber)
+	return fmt.Sprintf("%d %d R", reference.ObjectNumber, reference.GenerationNumber)
 }

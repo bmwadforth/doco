@@ -86,7 +86,7 @@ type Doco struct {
 	buffer *bytes.Buffer
 
 	size uint
-	lastCrOffset uint
+	currentPosition uint
 }
 
 //Regular Characters

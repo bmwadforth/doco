@@ -15,36 +15,49 @@ func (d *Doco) writeBody() {
 
 	buff := bytes.NewBuffer(make([]byte, 0))
 	for _, obj := range d.Body.Objects {
-		buff.Write([]byte(fmt.Sprintf("%d d obj%x", obj.ObjectNumber, obj.GenerationNumber, LF)))
-		buff.Write([]byte(fmt.Sprintf("<<%x", LF)))
-		for _, el := range obj.Dictionary {
-			for key, val := range el {
-				buff.Write([]byte(fmt.Sprintf("%s %s%x", key, val, LF)))
+		buff.Write([]byte(fmt.Sprintf("%d %d obj\n", obj.ObjectNumber, obj.GenerationNumber)))
+		buff.Write([]byte("<<\n"))
+		if obj.Data != nil {
+			buff.Write([]byte(fmt.Sprintf("%s\n", obj.Data.(string))))
+		} else {
+			for _, el := range obj.Dictionary {
+				for key, val := range el {
+					buff.Write([]byte(fmt.Sprintf("%s %s\n", key, val)))
+				}
 			}
 		}
-		buff.Write([]byte(fmt.Sprintf(">>%x", LF)))
-		buff.Write([]byte(fmt.Sprintf("endobj%x", LF)))
+		buff.Write([]byte(">>\n"))
+		buff.Write([]byte("endobj\n"))
 	}
 	d.buffer.Write(buff.Bytes())
 }
 
 func (d *Doco) writeCrossRef() {
-	//Foreach Indirect Object, Write Line With The Byte Offset Of That Object
-	//Foreach Cross-reference section
+	d.buildCrossRef()
 
+	buff := bytes.NewBuffer(make([]byte, 0))
+	buff.Write([]byte("xref\n"))
+	buff.Write([]byte(fmt.Sprintf("%d %d\n", d.CrossReference.FirstObject, d.CrossReference.Count)))
+
+	for _, ref := range d.CrossReference.References {
+		buff.Write([]byte(fmt.Sprintf("%010d %05d %s \n", ref.GenerationNumber, ref.ByteOffset, string(ref.RefFlag))))
+	}
+
+	d.buffer.Write(buff.Bytes())
 }
+
 
 func (d *Doco) writeTrailer() {
 	d.buildTrailer()
 
 	buff := bytes.NewBuffer(make([]byte, 0))
-	buff.Write([]byte(fmt.Sprintf("trailer%x", LF)))
-	buff.Write([]byte(fmt.Sprintf("<<%x", LF)))
-	buff.Write([]byte(fmt.Sprintf("/Size %d%x", d.Trailer.Size, LF)))
-	buff.Write([]byte(fmt.Sprintf("/Root %s%x", GenerateIndirectReference(d.Trailer.Root), LF)))
-	buff.Write([]byte(fmt.Sprintf(">>%x", LF)))
-	buff.Write([]byte(fmt.Sprintf("startxref%x", LF)))
-	buff.Write([]byte(fmt.Sprintf("%d%x", d.lastCrOffset, LF)))
+	buff.Write([]byte("trailer\n"))
+	buff.Write([]byte("<<\n"))
+	buff.Write([]byte(fmt.Sprintf("/Size %d\n", d.Trailer.Size)))
+	buff.Write([]byte(fmt.Sprintf("/Root %s\n", GenerateIndirectReference(d.Trailer.Root))))
+	buff.Write([]byte(">>\n"))
+	buff.Write([]byte("startxref\n"))
+	buff.Write([]byte(fmt.Sprintf("%d\n", d.currentPosition)))
 	buff.Write([]byte("%%EOF"))
 
 	d.buffer.Write(buff.Bytes())
