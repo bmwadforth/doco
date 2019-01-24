@@ -30,13 +30,64 @@ type DocumentDimensions struct {
 	DocumentWidth
 }
 
+
+type IndirectReference struct {
+	ObjectNumber     uint
+	GenerationNumber uint
+}
+
+type DocumentObject struct {
+	ObjectNumber     uint
+	GenerationNumber uint
+	Dictionary       []map[string]string
+	Data             interface{}
+	ByteOffset       uint
+}
+
+type DocumentHeader string
+type DocumentBody struct {
+	Count uint
+	Objects []DocumentObject
+}
+
+type Flag rune
+const (
+	F Flag = 102
+	N Flag = 110
+)
+type DocumentCrossRefItem struct {
+	ByteOffset uint
+	GenerationNumber uint
+	RefFlag Flag
+}
+type DocumentCrossReferenceTable struct {
+	FirstObject uint
+	Count uint
+	References []DocumentCrossRefItem
+}
+
+type DocumentTrailer struct {
+	Size uint
+	Root IndirectReference
+}
+
+
 type Doco struct {
+	Version int
+	Header DocumentHeader
+	Body DocumentBody
+	CrossReference DocumentCrossReferenceTable
+	Trailer DocumentTrailer
+
 	pageCount uint
 	pageSize PageSize
 	dimensions DocumentDimensions
-	buffer *bytes.Buffer
-}
 
+	buffer *bytes.Buffer
+
+	size uint
+	lastCrOffset uint
+}
 
 //Regular Characters
 type WhiteSpaceChars rune
