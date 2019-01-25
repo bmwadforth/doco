@@ -12,17 +12,13 @@ func New(size PageSize) *Doco {
 }
 
 func newDoco(size PageSize) *Doco {
-	doco := Doco{pageSize:size, pageCount:1}
+	doco := Doco{PageSize: size, PageCount:1}
 	doco.buffer = bytes.NewBuffer(make([]byte, 0))
 	return &doco
 }
 
 
 //Public Receivers
-func (d *Doco) GetDimensions() (width DocumentWidth, height DocumentHeight) {
-	return d.dimensions.DocumentWidth, d.dimensions.DocumentHeight
-}
-
 func (d *Doco) Build() error {
 	d.writeHeader()
 	d.writeBody()

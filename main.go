@@ -7,8 +7,10 @@ import (
 )
 
 //TODO:
-//Support Linearized PDF
-//Look at cross-reference streams
+//Function To Create New Document Catalog
+//Function To Create New Page Tree
+//Function To Create Page & Link It To Page Tree
+//
 
 func main(){
 	pdf := src.New(src.A4)
