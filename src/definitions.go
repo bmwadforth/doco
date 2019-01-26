@@ -2,6 +2,7 @@ package src
 
 import (
 	"bytes"
+	"fmt"
 	"time"
 )
 
@@ -28,9 +29,9 @@ type PaperSize uint
 type StandardUnit uint
 
 //The Document Width In Standard Unit (mm, px)
-type DocumentWidth StandardUnit
+type DocumentWidth float32
 //The Document Height In Standard Unit (mm, px)
-type DocumentHeight StandardUnit
+type DocumentHeight float32
 
 //Flag For Cross-Reference Section (F/N)
 type Flag rune
@@ -50,11 +51,6 @@ type DocumentHeader string
 
 type DocumentLayout uint
 
-type DocumentCatalog struct {
-	Type ObjectType
-	Pages []Page
-	PageLayout DocumentLayout
-}
 
 //A Struct Representing The Document Dimensions
 type DocumentDimensions struct {
@@ -73,14 +69,17 @@ type DocumentError struct {
 	Error error
 }
 
+type DocumentMeta struct {
+	Version string
+	PaperSize PaperSize
+	Unit StandardUnit
+	Dimensions DocumentDimensions
+}
 
 //The Main Doco Struct. Represents a PDF Document
 type Doco struct {
 	//Public Members
-	Version    string
-	PageCount  uint
-	PaperSize  PaperSize
-	Dimensions DocumentDimensions
+	Meta DocumentMeta
 	DocumentCatalog DocumentCatalog
 	PageTrees []PageTree
 	Pages      []Page
@@ -92,11 +91,13 @@ type Doco struct {
 	crossReference DocumentCrossReferenceTable
 	trailer        DocumentTrailer
 	buffer *bytes.Buffer
-	size uint
-	currentPosition uint
 }
 
 //Other Structs
+
+func (doc *DocumentObject) genIndirectRef() string{
+	return fmt.Sprintf("%d %d R", doc.ObjectNumber, doc.GenerationNumber)
+}
 
 //A Document Object.
 type DocumentObject struct {
@@ -108,25 +109,11 @@ type DocumentObject struct {
 	ByteOffset       uint
 }
 
-//A Resource Dictionary
-//Example: Pulled Into Page Struct, i.e. To Define Font
-type Resource struct {
-	extGState Dictionary
-	colorSpace Dictionary
-	pattern Dictionary
-	shading Dictionary
-	xObject Dictionary
-	font Dictionary
-	procSet []string
-	properties Dictionary
-}
-
-//Represents Rectangle With Various Points
-type Rectangle struct {
-	lowerLeftY uint
-	lowerLeftX uint
-	upperRightX uint
-	upperRightY uint
+//Document Catalog Object
+type DocumentCatalog struct {
+	Object DocumentObject
+	Pages *[]Page
+	PageLayout DocumentLayout
 }
 
 //A Page Tree
@@ -134,11 +121,16 @@ type Rectangle struct {
 type PageTree struct {
 	Object DocumentObject
 	parent *PageTree
-	kids *[]Page
-	count uint
+	pages  *[]Page
 }
 
 //A Page
+func (p *Page) addResource(resource Resource) error {
+	//check if old resource exists, if it does, merge argument with old one
+	p.resources = resource
+	return nil
+}
+
 type Page struct {
 	Object DocumentObject
 	parent         *PageTree
@@ -171,6 +163,28 @@ type Page struct {
 	userUnits uint
 	vp Dictionary
 }
+
+//A Resource Dictionary
+//Example: Pulled Into Page Struct, i.e. To Define Font
+type Resource struct {
+	extGState Dictionary
+	colorSpace Dictionary
+	pattern Dictionary
+	shading Dictionary
+	xObject Dictionary
+	font Dictionary
+	procSet []string
+	properties Dictionary
+}
+
+//Represents Rectangle With Various Points
+type Rectangle struct {
+	lowerLeftY float32
+	lowerLeftX float32
+	upperRightX float32
+	upperRightY float32
+}
+
 
 
 

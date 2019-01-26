@@ -6,13 +6,10 @@ import (
 )
 
 func (d *Doco) writeHeader() {
-	d.buildHeader()
 	d.buffer.Write([]byte(d.header))
 }
 
 func (d *Doco) writeBody() {
-	d.buildBody()
-
 	buff := bytes.NewBuffer(make([]byte, 0))
 	for _, obj := range d.body.Objects {
 		buff.Write([]byte(fmt.Sprintf("%d %d obj\n", obj.ObjectNumber, obj.GenerationNumber)))
@@ -33,8 +30,6 @@ func (d *Doco) writeBody() {
 }
 
 func (d *Doco) writeCrossRef() {
-	d.buildCrossRef()
-
 	buff := bytes.NewBuffer(make([]byte, 0))
 	buff.Write([]byte("xref\n"))
 	buff.Write([]byte(fmt.Sprintf("%d %d\n", d.crossReference.FirstObject, d.crossReference.Count)))
@@ -48,8 +43,6 @@ func (d *Doco) writeCrossRef() {
 
 
 func (d *Doco) writeTrailer() {
-	d.buildTrailer()
-
 	buff := bytes.NewBuffer(make([]byte, 0))
 	buff.Write([]byte("trailer\n"))
 	buff.Write([]byte("<<\n"))
@@ -57,7 +50,7 @@ func (d *Doco) writeTrailer() {
 	buff.Write([]byte(fmt.Sprintf("/Root %s\n", GenerateIndirectReference(d.trailer.Root))))
 	buff.Write([]byte(">>\n"))
 	buff.Write([]byte("startxref\n"))
-	buff.Write([]byte(fmt.Sprintf("%d\n", d.currentPosition)))
+	//buff.Write([]byte(fmt.Sprintf("%d\n", d.currentPosition)))
 	buff.Write([]byte("%%EOF"))
 
 	d.buffer.Write(buff.Bytes())

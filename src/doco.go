@@ -13,36 +13,59 @@ func New(size PaperSize) *Doco {
 
 func newDoco(size PaperSize) *Doco {
 	doco := Doco{
-		PaperSize: size,
-		PageCount: 1,
-		Version:   "1.7",
+		Meta: DocumentMeta{
+			PaperSize: size,
+			Version:   "1.7",
+			Unit:      Millimeters,
+		},
+		PageTrees: []PageTree{},
 		Pages:     []Page{},
+		Errors:    []DocumentError{},
 		buffer:    bytes.NewBuffer(make([]byte, 0)),
 	}
 
+	switch size {
+	case A0:
+		doco.Meta.Dimensions = DocumentDimensions{Height: 1189, Width: 841}
+	case A1:
+		doco.Meta.Dimensions = DocumentDimensions{Height: 841, Width: 594}
+	case A2:
+		doco.Meta.Dimensions = DocumentDimensions{Height: 594, Width: 420}
+	case A3:
+		doco.Meta.Dimensions = DocumentDimensions{Height: 420, Width: 297}
+	case A4:
+		doco.Meta.Dimensions = DocumentDimensions{Height: 297, Width: 210}
+	}
+
+	//TODO:
+	//page tree should have method for appending pages
 	initialPageTree := PageTree{
 		Object: DocumentObject{
 			ObjectType:       pageTree,
-			ObjectNumber:     1,
+			ObjectNumber:     2,
 			GenerationNumber: 0,
 			Dictionary:       []map[string]string{},
 		},
 		parent: nil,
-		kids:   nil,
-		count:  0,
+		pages:  &[]Page{},
 	}
 
-	initialPage := Page{Object: DocumentObject{
-		ObjectType:       page,
-		ObjectNumber:     2,
-		GenerationNumber: 0,
-	},
+	//TODO:
+	//page struct should have method for associating/disassociating page with pagetree
+	initialPage := Page{
+		Object: DocumentObject{
+			ObjectType:       page,
+			ObjectNumber:     3,
+			GenerationNumber: 0,
+		},
+		mediaBox: Rectangle{
+			upperRightX: StdUnitToPoint(float32(doco.Meta.Dimensions.Width), doco.Meta.Unit),
+			upperRightY: StdUnitToPoint(float32(doco.Meta.Dimensions.Height), doco.Meta.Unit),
+		},
 		parent: &initialPageTree,
 	}
 
-	pages := make([]Page, 1)
-	pages = append(pages, initialPage)
-	initialPageTree.kids = &pages
+	*initialPageTree.pages = append(*initialPageTree.pages, initialPage)
 
 	pgeTreeAddErr := doco.addPageTree(initialPageTree)
 	if pgeTreeAddErr != nil {
@@ -54,18 +77,20 @@ func newDoco(size PaperSize) *Doco {
 		panic(fmt.Sprintf("%v", pgeAddErr))
 	}
 
-	doco.buildHeader()
-
-	docCatalog := DocumentCatalog{}
-	err := doco.addDocumentCatalog(docCatalog)
-	if err != nil {
-		panic(fmt.Sprintf("%v", err))
+	docCatalog := DocumentCatalog{
+		Object: DocumentObject{
+			ObjectType:       catalog,
+			ObjectNumber:     1,
+			GenerationNumber: 0,
+		},
+		Pages:      &doco.Pages,
+		PageLayout: Single,
+	}
+	docCatalogErr := doco.addDocumentCatalog(docCatalog)
+	if docCatalogErr != nil {
+		panic(fmt.Sprintf("%v", docCatalogErr))
 	}
 
-	//add doc catalog
-	//add page tree
-	//add single page
-	//set page dimensions
 	//set font
 	//
 
@@ -73,14 +98,6 @@ func newDoco(size PaperSize) *Doco {
 }
 
 //Public Receivers
-func (d *Doco) AddPage() error {
-	err := d.addPage()
-	if err != nil {
-
-	}
-	return nil
-}
-
 func (d *Doco) Output() string {
 	return d.buffer.String()
 }
