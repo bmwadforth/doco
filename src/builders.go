@@ -8,9 +8,26 @@ import (
 //TODO:
 //Build function that outputs PDF structure formatted
 
-func (d *Doco) buildHeader() {
+//Document Structure
+func (d *Doco) addDocumentCatalog(catalog DocumentCatalog) error {
+	d.DocumentCatalog = catalog
+	return nil
+}
 
-	d.header = DocumentHeader(fmt.Sprintf("%%PDF-1.7\n%%%s\n", `\0xB5\0xB5\0xB5\0xB5`))
+func (d *Doco) addPageTree(tree PageTree) error {
+	d.PageTrees = append(d.PageTrees, tree)
+	return nil
+}
+
+func (d *Doco) addPage(p Page) error {
+	d.Pages = append(d.Pages, p)
+	return nil
+}
+
+
+//File Structure
+func (d *Doco) buildHeader() {
+	d.header = DocumentHeader(fmt.Sprintf("%%PDF-1.%s\n%%%s\n", d.Version, `\0xB5\0xB5\0xB5\0xB5`))
 	d.currentPosition = uint(len([]byte(d.header)))
 }
 

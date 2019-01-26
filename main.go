@@ -10,6 +10,8 @@ import (
 //Function To Create New Document Catalog
 //Function To Create New Page Tree
 //Function To Create Page & Link It To Page Tree
+//Use Cross-reference streams rather that cross-reference table
+//Implement encryption
 //
 
 func main(){

@@ -21,8 +21,8 @@ type ObjectType uint
 //Example: /Content 1 0 R
 type Dictionary map[string]interface{}
 
-//The PageSize, i.e A4
-type PageSize uint
+//The PaperSize, i.e A4
+type PaperSize uint
 
 //A Standard Unit, Can Be Millimeters, Pixels, etc.
 type StandardUnit uint
@@ -48,6 +48,14 @@ type DocumentHeader string
 //Structs
 //Core Doco Structs
 
+type DocumentLayout uint
+
+type DocumentCatalog struct {
+	Type ObjectType
+	Pages []Page
+	PageLayout DocumentLayout
+}
+
 //A Struct Representing The Document Dimensions
 type DocumentDimensions struct {
 	Height DocumentHeight
@@ -60,14 +68,23 @@ type IndirectReference struct {
 	GenerationNumber uint
 }
 
+type DocumentError struct {
+	Id uint
+	Error error
+}
+
 
 //The Main Doco Struct. Represents a PDF Document
 type Doco struct {
 	//Public Members
-	Version        int
+	Version    string
 	PageCount  uint
-	PageSize   PageSize
+	PaperSize  PaperSize
 	Dimensions DocumentDimensions
+	DocumentCatalog DocumentCatalog
+	PageTrees []PageTree
+	Pages      []Page
+	Errors []DocumentError
 
 	//Private Members
 	header         DocumentHeader
@@ -80,6 +97,16 @@ type Doco struct {
 }
 
 //Other Structs
+
+//A Document Object.
+type DocumentObject struct {
+	ObjectType ObjectType
+	ObjectNumber     uint
+	GenerationNumber uint
+	Dictionary       []map[string]string
+	Data             interface{}
+	ByteOffset       uint
+}
 
 //A Resource Dictionary
 //Example: Pulled Into Page Struct, i.e. To Define Font
@@ -94,15 +121,6 @@ type Resource struct {
 	properties Dictionary
 }
 
-//A Page Tree
-//Sits Above Pages
-type PageTree struct {
-	objType ObjectType
-	parent Dictionary
-	kids []IndirectReference
-	count uint
-}
-
 //Represents Rectangle With Various Points
 type Rectangle struct {
 	lowerLeftY uint
@@ -111,10 +129,19 @@ type Rectangle struct {
 	upperRightY uint
 }
 
+//A Page Tree
+//Sits Above Pages
+type PageTree struct {
+	Object DocumentObject
+	parent *PageTree
+	kids *[]Page
+	count uint
+}
+
 //A Page
 type Page struct {
-	objType        ObjectType
-	parent         IndirectReference
+	Object DocumentObject
+	parent         *PageTree
 	lastModified   time.Time
 	resources      Resource
 	mediaBox       Rectangle
@@ -145,14 +172,11 @@ type Page struct {
 	vp Dictionary
 }
 
-//A Document Object.
-type DocumentObject struct {
-	ObjectNumber     uint
-	GenerationNumber uint
-	Dictionary       []map[string]string
-	Data             interface{}
-	ByteOffset       uint
-}
+
+
+
+
+
 
 /*
 type DocumentHeader struct {

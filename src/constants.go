@@ -7,11 +7,20 @@ const (
 )
 
 const (
-	A0 PageSize = 0
-	A1 PageSize = 1
-	A2 PageSize = 2
-	A3 PageSize = 3
-	A4 PageSize = 4
+	Single DocumentLayout = 0
+	OneColumn DocumentLayout = 1
+	TwoColumnLeft DocumentLayout = 2
+	TwoColumnRight DocumentLayout = 3
+	TwoPageLeft DocumentLayout = 4
+	TwoPageRight DocumentLayout = 5
+)
+
+const (
+	A0 PaperSize = 0
+	A1 PaperSize = 1
+	A2 PaperSize = 2
+	A3 PaperSize = 3
+	A4 PaperSize = 4
 )
 
 const (
