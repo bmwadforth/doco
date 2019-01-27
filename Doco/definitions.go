@@ -55,6 +55,7 @@ type Page struct {
 	Parent *PageTree
 	Resources *PageResources
 	Contents *PageContents
+	*Core
 }
 
 type PageResources struct {

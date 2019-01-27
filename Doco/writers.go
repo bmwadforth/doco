@@ -49,16 +49,21 @@ func (r *Raw) buildFrom(core Core) {
 		})
 		newObjectNum = newObjectNum + 1
 	}*/
-	*r.Body.Objects = append(*r.Body.Objects, RawBodyObject{
-		ObjectType:TypePage,
-		ObjectNumber:3,
-		GenerationNumber:0,
-		Data:fmt.Sprintf("/Parent 2 0 R\n/MediaBox [0 0 612 729]\n/Resources << /Font\n<<\n/F1 1000 0 R\n>>\n>>\n/Contents 4 0 R\n"),
-	})
+
+	objectNum := 3
+	for _, page := range core.Pages {
+		*r.Body.Objects = append(*r.Body.Objects, RawBodyObject{
+			ObjectType:TypePage,
+			ObjectNumber:uint(objectNum),
+			GenerationNumber:0,
+			Data:page.generateObj(),
+		})
+		objectNum = objectNum + 1
+	}
 
 	*r.Body.Objects = append(*r.Body.Objects, RawBodyObject{
 		ObjectType:TypeStreamObject,
-		ObjectNumber:4,
+		ObjectNumber:10,
 		GenerationNumber:0,
 		Data:fmt.Sprintf("/Length 42 >>\nstream\nBT\n/F1 12 Tf\n50 50 Td\n(Hello World!) Tj\nET\nendstream\n"),
 	})

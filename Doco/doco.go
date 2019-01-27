@@ -36,6 +36,8 @@ func newDoco(size PaperSize) *Core {
 		Resources:&PageResources{
 			Font:&initialFont,
 		},
+		Contents:&PageContents{},
+		Core:doco,
 	}
 	*initialPageTree.Pages = append(*initialPageTree.Pages, initialPage)
 
