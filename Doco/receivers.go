@@ -1,39 +1,11 @@
 package Doco
 
-import (
-	"fmt"
-)
-
-//Doco Receivers
-func (d *Doco) addCatalog(catalog DocoCatalog) {
+//Core Receivers
+func (d *Core) addCatalog(catalog Catalog) {
 	d.Catalog = catalog
 }
 
-func (d *Doco) addPageTree(tree DocoPageTree) {
-	d.PageTrees = append(d.PageTrees, tree)
-}
-
-func (d *Doco) addPage(page DocoPage) {
+func (d *Core) addPage(page Page) {
 	//page.setFont()
 	d.Pages = append(d.Pages, page)
-}
-
-
-
-
-
-func (d *Doco) writeHeader() {
-	d.buffer.Write([]byte(fmt.Sprintf("%%PDF-%s\n%%%s\n", d.Meta.Version, `\0xB5\0xB5\0xB5\0xB5`)))
-}
-
-func (d *Doco) writeBody(){
-
-}
-
-func(d *Doco) writeXref(){
-
-}
-
-func(d *Doco) writeTrailer(){
-
 }

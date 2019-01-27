@@ -1,23 +1,21 @@
 package Doco
 
 import "bytes"
-
 //Interfaces
-
-type DocoMargin struct {
-	Top uint
-	Right uint
-	Bottom uint
-	Left uint
-}
-
-type DocoInstance interface {
-	SetMargin(margin DocoMargin)
+type Instance interface {
+	SetMargin(margin Margin)
 	Output() string
 	Save(path string) error
 	WriteText(text string) error
 	//Write
 	//Etc
+}
+
+type Margin struct {
+	Top uint
+	Right uint
+	Bottom uint
+	Left uint
 }
 
 //Custom Types
@@ -26,50 +24,48 @@ type ContentType uint
 type PaperSize uint
 type Unit uint
 
-type Doco struct {
-	Meta DocoMeta
-	Catalog DocoCatalog
-	PageTrees []DocoPageTree
-	Pages []DocoPage
-	buffer *bytes.Buffer
+type Core struct {
+	Meta      Meta
+	Catalog   Catalog
+	Pages     []Page
 }
 
-type DocoMeta struct {
-	Version string
-	Dimensions DocoDimensions
-	Unit Unit
+type Meta struct {
+	Version    string
+	Dimensions Dimensions
+	Unit       Unit
 }
 
-type DocoDimensions struct {
+type Dimensions struct {
 	Width float32
 	Height float32
 }
 
-type DocoCatalog struct {
-	RootPageTree *DocoPageTree
+type Catalog struct {
+	RootPageTree *PageTree
 }
 
-//Page Structs
-type DocoPageTree struct {
-	Parent *DocoPageTree
-	Pages *[]DocoPage
+//TypePage Structs
+type PageTree struct {
+	Parent *PageTree
+	Pages *[]Page
 }
 
-type DocoPage struct {
-	Parent *DocoPageTree
-	Resources *DocoPageResources
-	Contents *DocoPageContents
+type Page struct {
+	Parent *PageTree
+	Resources *PageResources
+	Contents *PageContents
 }
 
-type DocoPageResources struct {
-	Font *DocoFont
+type PageResources struct {
+	Font *Font
 }
 
-type DocoFont struct {
+type Font struct {
 	BaseFont string
 }
 
-type DocoPageContents struct {
+type PageContents struct {
 	Type   ContentType
 	Data   interface{}
 	Length uint
@@ -81,12 +77,12 @@ type DocoPageContents struct {
 
 //Raw Structs
 //Used When Writing Data To Buffer For Raw File Structure
-type DocoRawHeader struct {
+type RawHeader struct {
 	Version string
 	FileHasBinary bool
 }
 
-type DocoRawBodyObject struct {
+type RawBodyObject struct {
 	ObjectType ObjectType
 	ObjectNumber uint
 	GenerationNumber uint
@@ -94,28 +90,30 @@ type DocoRawBodyObject struct {
 	Offset uint
 }
 
-type DocoRawBody struct {
-	Objects *[]DocoRawBodyObject
+type RawBody struct {
+	Objects *[]RawBodyObject
 }
 
-type DocoRawXrefObject struct {
-	RefToBodyObject *DocoRawBodyObject
+type RawXrefObject struct {
+	RefToBodyObject *RawBodyObject
 	InUse bool
+	Offset uint
 }
 
-type DocoRawXref struct {
-	Objects *[]DocoRawXrefObject
+type RawXref struct {
+	Objects *[]RawXrefObject
 }
 
-type DocoRawTrailer struct {
-	Root *DocoRawBody
+type RawTrailer struct {
 	Size uint
-	LastXref *DocoRawXref
+	FirstBodyObject *RawBodyObject
+	LastXref *RawXrefObject
 }
 
-type DocoRaw struct {
-	Header DocoRawHeader
-	Body DocoRawBody
-	Xref DocoRawXref
-	Trailer DocoRawTrailer
+type Raw struct {
+	Header  RawHeader
+	Body    RawBody
+	Xref    RawXref
+	Trailer RawTrailer
+	Buffer *bytes.Buffer
 }

@@ -1,17 +1,17 @@
 package Doco
 
 const (
-	Catalog      ObjectType = 0
-	PageTree     ObjectType = 1
-	Page         ObjectType = 2
-	StreamObject ObjectType = 3
-	Font         ObjectType = 4
+	TypeCatalog      ObjectType = 0
+	TypePageTree     ObjectType = 1
+	TypePage         ObjectType = 2
+	TypeStreamObject ObjectType = 3
+	TypeFont         ObjectType = 4
 )
 
 const (
-	Milimeters Unit = 0
-	Pixels Unit = 1
-	Points Unit = 2
+	UnitMilimeters Unit = 0
+	UnitPixels     Unit = 1
+	UnitPoints     Unit = 2
 )
 
 const (
@@ -29,5 +29,5 @@ const (
 )
 
 const (
-	Stream ContentType = 0
+	ContentStream ContentType = 0
 )

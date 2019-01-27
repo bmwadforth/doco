@@ -1,76 +1,87 @@
 package Doco
 
 import (
-	"bytes"
 	"io/ioutil"
 )
 
-func New(size PaperSize) DocoInstance {
+func New(size PaperSize) Instance {
 	return newDoco(size)
 }
 
-func newDoco(size PaperSize) *Doco {
-	doco := &Doco{
-		Meta:DocoMeta{
-			Version:"1.7",
-			Unit:Milimeters,
+func newDoco(size PaperSize) *Core {
+	doco := &Core{
+		Meta: Meta{
+			Version: "1.7",
+			Unit:    UnitMilimeters,
 		},
-		PageTrees: []DocoPageTree{},
-		Pages: []DocoPage{},
-		buffer:bytes.NewBuffer(make([]byte, 0)),
+		Pages: []Page{},
 	}
 
 	switch size {
 	case A4:
-		doco.Meta.Dimensions = DocoDimensions{Width:210, Height:297}
+		doco.Meta.Dimensions = Dimensions{Width: 210, Height:297}
 	}
 
-	initialFont := DocoFont{
+	initialFont := Font{
 		BaseFont:"Helvetica",
 	}
 
-	initialPageTree := DocoPageTree{
+	initialPageTree := PageTree{
 		Parent:nil,
-		Pages:&[]DocoPage{},
+		Pages:&[]Page{},
 	}
 
-	initialPage := DocoPage{
+	initialPage := Page{
 		Parent:&initialPageTree,
-		Resources:&DocoPageResources{
+		Resources:&PageResources{
 			Font:&initialFont,
 		},
 	}
 	*initialPageTree.Pages = append(*initialPageTree.Pages, initialPage)
 
-	initialDocCatalog := DocoCatalog{
+	initialDocCatalog := Catalog{
 		RootPageTree:&initialPageTree,
 	}
 
 	doco.addCatalog(initialDocCatalog)
-	doco.addPageTree(initialPageTree)
 	doco.addPage(initialPage)
 
 	return doco
 }
 
 //
-func (d *Doco) SetMargin(margin DocoMargin) {
+func (d *Core) SetMargin(margin Margin) {
 
 }
 
-func (d *Doco) Save(path string) error {
-	err := ioutil.WriteFile(path, d.buffer.Bytes(), 0777)
+func (d *Core) Save(path string) error {
+	raw := Raw{}
+	raw.buildFrom(*d)
+
+	raw.writeHeader()
+	raw.writeBody()
+	raw.writeXRef()
+	raw.writeTrailer()
+
+	err := ioutil.WriteFile(path, raw.Buffer.Bytes(), 0777)
 	if err != nil {
 		return  err
 	}
 	return nil
 }
 
-func (d *Doco) Output() string {
-	return d.buffer.String()
+func (d *Core) Output() string {
+	raw := Raw{}
+	raw.buildFrom(*d)
+
+	raw.writeHeader()
+	raw.writeBody()
+	raw.writeXRef()
+	raw.writeTrailer()
+	return raw.Buffer.String()
 }
 
-func (d *Doco) WriteText(text string) error {
+func (d *Core) WriteText(text string) error {
 
 
 	return nil

@@ -2,9 +2,9 @@ package Doco
 
 func StdUnitToPoint(val float32, unit Unit) float32 {
 	switch unit {
-	case Milimeters:
+	case UnitMilimeters:
 		return float32(val * 2.835)
-	case Pixels:
+	case UnitPixels:
 		return float32(val * 0.75)
 	default:
 		return val
