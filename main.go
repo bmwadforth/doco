@@ -1,7 +1,7 @@
 package main
 
 import (
-	"doco/src"
+	"doco/Doco"
 	"fmt"
 	"log"
 )
@@ -15,7 +15,7 @@ import (
 //
 
 func main(){
-	pdf := src.New(src.A4)
+	pdf := Doco.New(Doco.A4)
 	/*
 	val, err := src.ConvertUnit(500, src.Pixels, src.Millimeters)
 	if err != nil {
