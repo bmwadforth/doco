@@ -18,8 +18,6 @@ func (r *Raw) buildFrom(core Core) {
 	r.Header.FileHasBinary = true
 
 	//Build Body
-
-
 	//Write Catalog Object
 	r.Body.Objects = &[]RawBodyObject{}
 	*r.Body.Objects = append(*r.Body.Objects, RawBodyObject{
@@ -29,6 +27,8 @@ func (r *Raw) buildFrom(core Core) {
 		Data:fmt.Sprintf("/Pages %s\n", "2 0 R"),
 	})
 
+	//Check parents in each page, if they all reference same parent, create single, predictable page tree,
+	//else create balanced tree structure
 	//Write PageTree Object
 	*r.Body.Objects = append(*r.Body.Objects, RawBodyObject{
 		ObjectType:TypePageTree,
@@ -36,19 +36,6 @@ func (r *Raw) buildFrom(core Core) {
 		GenerationNumber:0,
 		Data:fmt.Sprintf("/Kids [3 0 R]\n/Count 1\n"),
 	})
-
-	//Write Objects In Pages
-	/*
-	newObjectNum := 3
-	for _, obj := range core.Pages {
-		*r.Body.Objects = append(*r.Body.Objects, RawBodyObject{
-			ObjectType:TypePage,
-			ObjectNumber:uint(newObjectNum),
-			GenerationNumber:0,
-			Data:obj.
-		})
-		newObjectNum = newObjectNum + 1
-	}*/
 
 	objectNum := 3
 	for _, page := range core.Pages {
@@ -65,7 +52,7 @@ func (r *Raw) buildFrom(core Core) {
 		ObjectType:TypeStreamObject,
 		ObjectNumber:10,
 		GenerationNumber:0,
-		Data:fmt.Sprintf("/Length 42 >>\nstream\nBT\n/F1 12 Tf\n50 50 Td\n(Hello World!) Tj\nET\nendstream\n"),
+		Data:fmt.Sprintf("/Length 43 >>\nstream\nBT\n/F1 12 Tf\n10 832 Td\n(Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World!) Tj\nET\nendstream\n"),
 	})
 
 	//Write Font Object

@@ -28,6 +28,9 @@ func main(){
 
 	*/
 
+	pdf.Write(Doco.Text, "This is some text")
+	//pdf.Write(Doco.Image, "path/to/image")
+
 	saveErr := pdf.Save("./myPdf.pdf")
 	if saveErr != nil {
 		fmt.Printf("An Error Occurred: %v\n", saveErr)

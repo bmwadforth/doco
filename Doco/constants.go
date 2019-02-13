@@ -9,9 +9,9 @@ const (
 )
 
 const (
-	UnitMilimeters Unit = 0
-	UnitPixels     Unit = 1
-	UnitPoints     Unit = 2
+	UnitMillimeters Unit = 0
+	UnitPixels      Unit = 1
+	UnitPoints      Unit = 2
 )
 
 const (
@@ -29,5 +29,6 @@ const (
 )
 
 const (
-	ContentStream ContentType = 0
+	Text ContentType = 0
+	Image ContentType = 1
 )

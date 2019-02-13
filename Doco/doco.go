@@ -1,6 +1,8 @@
 package Doco
 
 import (
+	"fmt"
+	"github.com/pkg/errors"
 	"io/ioutil"
 )
 
@@ -12,7 +14,7 @@ func newDoco(size PaperSize) *Core {
 	doco := &Core{
 		Meta: Meta{
 			Version: "1.7",
-			Unit:    UnitMilimeters,
+			Unit:    UnitMillimeters,
 		},
 		Pages: []Page{},
 	}
@@ -20,6 +22,8 @@ func newDoco(size PaperSize) *Core {
 	switch size {
 	case A4:
 		doco.Meta.Dimensions = Dimensions{Width: 210, Height:297}
+	case A3:
+		doco.Meta.Dimensions = Dimensions{Width: 297, Height:420}
 	}
 
 	initialFont := Font{
@@ -57,6 +61,10 @@ func (d *Core) SetMargin(margin Margin) {
 }
 
 func (d *Core) Save(path string) error {
+	if len(d.Errors) != 0 {
+		return errors.New(fmt.Sprintf("%d Errors Exist. Please Fix Them Before Saving PDF", len(d.Errors)))
+	}
+
 	raw := Raw{}
 	raw.buildFrom(*d)
 
@@ -83,8 +91,11 @@ func (d *Core) Output() string {
 	return raw.Buffer.String()
 }
 
-func (d *Core) WriteText(text string) error {
+func (d *Core) Write(contentType ContentType, data interface{}) {
+	switch contentType {
+	case Text:
 
+	case Image:
 
-	return nil
+	}
 }

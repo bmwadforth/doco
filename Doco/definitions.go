@@ -6,9 +6,7 @@ type Instance interface {
 	SetMargin(margin Margin)
 	Output() string
 	Save(path string) error
-	WriteText(text string) error
-	//Write
-	//Etc
+	Write(contentType ContentType, data interface{})
 }
 
 type Margin struct {
@@ -28,6 +26,7 @@ type Core struct {
 	Meta      Meta
 	Catalog   Catalog
 	Pages     []Page
+	Errors []error
 }
 
 type Meta struct {
