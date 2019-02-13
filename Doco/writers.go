@@ -52,7 +52,7 @@ func (r *Raw) buildFrom(core Core) {
 		ObjectType:TypeStreamObject,
 		ObjectNumber:10,
 		GenerationNumber:0,
-		Data:fmt.Sprintf("/Length 43 >>\nstream\nBT\n/F1 12 Tf\n10 832 Td\n(Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World!) Tj\nET\nendstream\n"),
+		Data:fmt.Sprintf("/Length 43 >>\nstream\nBT\n/F1 12 Tf\n10 832 Td\n(Hello world!) Tj\n0 -12 TD\n(Hello world!) Tj\nET\nendstream\n"),
 	})
 
 	//Write Font Object
