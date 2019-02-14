@@ -6,41 +6,13 @@ import (
 	"log"
 )
 
-//TODO:
-//Function To Create New Document TypeCatalog
-//Function To Create New TypePage Tree
-//Function To Create TypePage & Link It To TypePage Tree
-//Use Cross-reference streams rather that cross-reference table
-//Implement encryption
-//
-
 func main(){
-	pdf := Doco.New(Doco.A4)
-	/*
-	val, err := src.ConvertUnit(500, src.UnitPixels, src.Millimeters)
-	if err != nil {
-		log.Fatalf("An Error Occurred: %v", err)
-	}
-	fmt.Printf("Conversion From 500 UnitPixels To %f Millimeters\n", val)
+	pdf := Doco.New()
 
-	width, height := pdf.GetDimensions()
-	fmt.Printf("Dimensions Of Core TypePage. Height: %d \t Width: %d\n", height, width)
-
-	*/
-
-	pdf.Write(Doco.Text, "This is some text")
-	//pdf.Write(Doco.Image, "path/to/image")
-
-	saveErr := pdf.Save("./myPdf.pdf")
-	if saveErr != nil {
-		fmt.Printf("An Error Occurred: %v\n", saveErr)
+	saveError := pdf.Save("./myPdf.pdf")
+	if saveError != nil {
+		log.Fatal(fmt.Errorf("an error occurred while saving PDF - %v", saveError))
 	}
 
-	/*
-	err := pdf.Build()
-	if err != nil {
-		log.Fatal(fmt.Sprintf("An Error Occurred: %v", err))
-	}*/
-
-	log.Println(pdf.Output())
+	log.Println(string(pdf.Output()))
 }
