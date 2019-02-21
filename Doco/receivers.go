@@ -14,6 +14,15 @@ func (doco *Doco) Save(path string) error {
 	return nil
 }
 
+func (doco *Doco) Write(content string) {
+	//Check If Writing will cause page to leak into new page
+	//If yes, then create new page, update pointer to 'current page', and begin writing
+
+
+	bytesWritten := doco.CurrentPage.Write(content)
+	doco.BufferPosition = bytesWritten
+}
+
 func (doco *Doco) Output() []byte {
 	return doco.build()
 }
@@ -72,9 +81,10 @@ func (doco *Doco) writeObjects() ([]byte, ObjectMeta) {
 		pageBeginNum := objNum + 1
 		tempPageBuff := bytes.NewBuffer(make([]byte, 0))
 
-		for range *pageTree.Children {
+		for _, page := range *pageTree.Children {
 			childRefs = append(childRefs, uint(pageBeginNum))
-			tempPageBuff.WriteString(fmt.Sprintf("%d 0 obj\n<<\n/Type /Page\n/Parent %d 0 R\n/MediaBox [%d %d %d %d]\n/Contents %d 0 R\n/Resources << /Font << /F1 %d 0 R >>\n>>\n>>\nendobj\n", pageBeginNum, objNum, 0, 0, doco.Meta.Dimensions.Width, doco.Meta.Dimensions.Height, contentRefNum, fontRefNum))
+			width, height := CalculatePoints(page.PageType)
+			tempPageBuff.WriteString(fmt.Sprintf("%d 0 obj\n<<\n/Type /Page\n/Parent %d 0 R\n/MediaBox [%d %d %d %d]\n/Contents %d 0 R\n/Resources << /Font << /F1 %d 0 R >>\n>>\n>>\nendobj\n", pageBeginNum, objNum, 0, 0, width, height, contentRefNum, fontRefNum))
 			pageBeginNum++
 		}
 

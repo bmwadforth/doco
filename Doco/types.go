@@ -1,25 +1,40 @@
 package Doco
 
+import "bytes"
+
+type DocoPageType uint
+
+const (
+	A3 DocoPageType = 0
+	A4 DocoPageType = 1
+)
+
 type DocoFont struct {
 	Name string
 	FontName string
 }
 
-type DocoDimensions struct {
+type DocoDimension struct {
 	Height uint
 	Width uint
 }
 
+type DocoMargin struct {
+	Top uint
+	Right uint
+	Bottom uint
+	Left uint
+}
+
 type DocoMeta struct {
-	Font DocoFont
-	Dimensions DocoDimensions
 	PdfVersion float32
 }
 
 type Doco struct {
 	Meta DocoMeta
 	Pages []DocoPageTree
-	Errors []error
+	CurrentPage *DocoPage
+	BufferPosition uint
 }
 
 type DocoPageTree struct {
@@ -28,5 +43,14 @@ type DocoPageTree struct {
 
 type DocoPage struct {
 	PageNumber uint
+	Font       DocoFont
+	PageType DocoPageType
+	Margin     DocoMargin
+	Body *bytes.Buffer
 	Parent *DocoPageTree
+	Errors []error
 }
+
+
+
+//Stream Types

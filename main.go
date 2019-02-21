@@ -7,7 +7,10 @@ import (
 )
 
 func main(){
-	pdf := Doco.New()
+	pdf := Doco.New(Doco.A4)
+
+	pdf.Write("Hello World!")
+
 
 	saveError := pdf.Save("./myPdf.pdf")
 	if saveError != nil {
