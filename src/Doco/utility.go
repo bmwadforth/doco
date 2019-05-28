@@ -1,6 +1,10 @@
 package Doco
 
-func CalculatePoints(pageType DocoPageType) (uint, uint) {
+import (
+	. "doco/src/Pages"
+)
+
+func CalculatePoints(pageType PageType) (uint, uint) {
 	switch pageType {
 	case A3:
 		panic("Not Implemented Yet")

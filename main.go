@@ -1,15 +1,16 @@
 package main
 
 import (
-	"doco/Doco"
+	. "doco/src/Doco"
+	. "doco/src/Pages"
 	"fmt"
 	"log"
 )
 
 func main(){
-	pdf := Doco.New(Doco.A4)
+	pdf := New(A4)
 
-	pdf.Write("Hello World!")
+	pdf.Write("Hello World!!!!!!")
 
 
 	saveError := pdf.Save("./myPdf.pdf")

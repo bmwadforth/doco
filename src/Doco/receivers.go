@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 )
 
-func (doco *Doco) Save(path string) error {
+func (doco *Document) Save(path string) error {
 	err := ioutil.WriteFile(path, doco.build(), 0777)
 	if err != nil {
 		return err
@@ -14,7 +14,7 @@ func (doco *Doco) Save(path string) error {
 	return nil
 }
 
-func (doco *Doco) Write(content string) {
+func (doco *Document) Write(content string) {
 	//Check If Writing will cause page to leak into new page
 	//If yes, then create new page, update pointer to 'current page', and begin writing
 
@@ -23,12 +23,16 @@ func (doco *Doco) Write(content string) {
 	doco.BufferPosition = bytesWritten
 }
 
-func (doco *Doco) Output() []byte {
+func (doco *Document) WriteHtml(html string) {
+	panic("implement me")
+}
+
+func (doco *Document) Output() []byte {
 	return doco.build()
 }
 
 
-func (doco *Doco) build() []byte {
+func (doco *Document) build() []byte {
 	buff := bytes.NewBuffer(make([]byte, 0))
 	//HEADER
 	buff.WriteString(fmt.Sprintf("%%PDF-%.01f\n", doco.Meta.PdfVersion))
@@ -56,7 +60,7 @@ type ObjectMeta struct {
 	Offsets []uint
 }
 
-func (doco *Doco) writeObjects() ([]byte, ObjectMeta) {
+func (doco *Document) writeObjects() ([]byte, ObjectMeta) {
 	buff := bytes.NewBuffer(make([]byte, 0))
 
 	objNum := 2
@@ -76,6 +80,8 @@ func (doco *Doco) writeObjects() ([]byte, ObjectMeta) {
 	//Page content ref, needs to be refactored
 	contentRefNum := 1000
 
+	data := ""
+
 	for _, pageTree := range doco.Pages {
 		childRefs := make([]uint, 0)
 		pageBeginNum := objNum + 1
@@ -84,6 +90,8 @@ func (doco *Doco) writeObjects() ([]byte, ObjectMeta) {
 		for _, page := range *pageTree.Children {
 			childRefs = append(childRefs, uint(pageBeginNum))
 			width, height := CalculatePoints(page.PageType)
+
+			data = page.Body.String()
 			tempPageBuff.WriteString(fmt.Sprintf("%d 0 obj\n<<\n/Type /Page\n/Parent %d 0 R\n/MediaBox [%d %d %d %d]\n/Contents %d 0 R\n/Resources << /Font << /F1 %d 0 R >>\n>>\n>>\nendobj\n", pageBeginNum, objNum, 0, 0, width, height, contentRefNum, fontRefNum))
 			pageBeginNum++
 		}
@@ -97,7 +105,7 @@ func (doco *Doco) writeObjects() ([]byte, ObjectMeta) {
 		objNum = pageBeginNum
 	}
 
-	buff.WriteString("1000 0 obj\n<< /Length 73 >>\nstream\nBT\n/F1 12 Tf\n100 100 Td\n(Hello world!) Tj\nET\nendstream\nendobj\n")
+	buff.WriteString(fmt.Sprintf("1000 0 obj\n<< /Length 73 >>\nstream\nBT\n/F1 12 Tf\n100 100 Td\n(%s) Tj\nET\nendstream\nendobj\n", data))
 
 
 	//objMeta.Size = to how ever many objects were 'written'

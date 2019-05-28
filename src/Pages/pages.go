@@ -1,15 +1,15 @@
-package Doco
+package Pages
 
 import (
 	"fmt"
 	"log"
 )
 
-func (page *DocoPage) SetMargin(margin DocoMargin) {
+func (page *Page) SetMargin(margin Margin) {
 	page.Margin = margin
 }
 
-func (page *DocoPage) Write(content string) uint {
+func (page *Page) Write(content string) uint {
 	bytesWritten, err := page.Body.WriteString(content)
 	if err != nil {
 		page.Errors = append(page.Errors, err)
