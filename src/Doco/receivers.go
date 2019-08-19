@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
+	writers "doco/src/Writers"
 )
 
 func (doco *Document) Save(path string) error {
@@ -35,7 +36,7 @@ func (doco *Document) Output() []byte {
 func (doco *Document) build() []byte {
 	buff := bytes.NewBuffer(make([]byte, 0))
 	//HEADER
-	buff.WriteString(fmt.Sprintf("%%PDF-%.01f\n", doco.Meta.PdfVersion))
+	buff.WriteString(writers.WriteHeader(1.7))
 
 	//BODY
 	objBytes, objMeta := doco.writeObjects()

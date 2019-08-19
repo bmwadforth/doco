@@ -1,7 +1,9 @@
 package Writers
 
-func WriteHeader() []byte {
-	return []byte{}
+import "fmt"
+
+func WriteHeader(pdfVersion float32) string {
+	return fmt.Sprintf("%%PDF-%.01f\n", pdfVersion)
 }
 
 func WriteBody() []byte {
