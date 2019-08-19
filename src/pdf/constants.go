@@ -1,4 +1,4 @@
-package Writers
+package pdf
 
 type CodePoint rune
 const (
@@ -20,11 +20,3 @@ const (
 	PercentSign        CodePoint = '\x25'
 )
 
-type CharItem struct {
-	codePoint  CodePoint
-	iterations uint
-}
-
-type ObjectItem struct {
-
-}
