@@ -1,4 +1,4 @@
-package pdf
+package file
 
 type CodePoint rune
 const (

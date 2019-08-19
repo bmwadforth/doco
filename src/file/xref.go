@@ -1,4 +1,4 @@
-package pdf
+package file
 
 type Xref struct {
 

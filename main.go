@@ -1,12 +1,12 @@
 package main
 
 import (
-	"doco/src/pdf"
+	"doco/src/file"
 	"fmt"
 )
 
 func main() {
-	header := pdf.Header{Version: pdf.Latest}
+	header := file.Header{Version: file.Latest}
 	fmt.Println(header.ToBytes())
 	fmt.Println(string(header.ToBytes()))
 }

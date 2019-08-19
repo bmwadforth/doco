@@ -1,12 +1,15 @@
 package pdf
 
-import "bytes"
+import (
+	"bytes"
+	"doco/src/file"
+)
 
 type Doco struct {
-	Header *Header
-	Body *Body
-	Xref *Xref
-	Trailer *Trailer
+	Header *file.Header
+	Body *file.Body
+	Xref *file.Xref
+	Trailer *file.Trailer
 }
 
 func (d *Doco) Build() ([]byte, error) {
