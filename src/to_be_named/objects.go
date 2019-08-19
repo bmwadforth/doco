@@ -1,6 +1,9 @@
-package pdf
+package to_be_named
 
-import "fmt"
+import (
+	"bytes"
+	"fmt"
+)
 
 type ObjectType string
 const (
@@ -20,4 +23,16 @@ func (ref *ObjectReference) Format() string {
 
 type Object struct {
 	Type ObjectType
+}
+
+
+func WriteObject(objects map[string]interface{}) []byte {
+	objectBytes := bytes.NewBuffer(make([]byte, 16))
+	objectBytes.Write([]byte("<<"))
+	for key, value := range objects {
+		objectBytes.Write([]byte(fmt.Sprintf("%s %s", key, value)))
+	}
+	objectBytes.Write([]byte(">>"))
+
+	return objectBytes.Bytes()
 }
